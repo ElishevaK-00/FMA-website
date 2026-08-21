@@ -171,24 +171,16 @@
   .officer-edit-row{ position:absolute; top:12px; right:12px; display:flex; gap:5px; }
 
   /* GALLERY */
-  .gallery-grid{ display:flex; flex-direction:column; gap:64px; }
-  .gallery-event{ width:100%; }
-  .gallery-event + .gallery-event{ padding-top:52px; border-top:1px solid var(--line); }
-  .gallery-event-header{ margin-bottom:24px; max-width:720px; }
-  .gallery-event-header h3{ font-family:'Fraunces',serif; font-size:28px; color:var(--navy); margin:7px 0 8px; }
-  .gallery-event-header p{ color:var(--ink-soft); font-size:14px; line-height:1.6; margin:0; }
-  .gallery-event-grid{ columns:4 220px; column-gap:14px; }
+  .gallery-grid{ columns:4 220px; column-gap:14px; }
   .gallery-item{ break-inside:avoid; margin-bottom:14px; position:relative; border-radius:8px; overflow:hidden; box-shadow:var(--shadow); background:var(--paper); }
   .gallery-item img{ width:100%; display:block; transition:transform .3s ease; cursor:pointer; }
   .gallery-item:hover img{ transform:scale(1.04); }
-  .gallery-cap{ position:absolute; left:0; right:0; bottom:0; padding:24px 12px 10px; background:linear-gradient(0deg,rgba(15,26,50,0.90),transparent); color:#fff; font-size:12px; font-family:'IBM Plex Mono',monospace; pointer-events:none; }
+  .gallery-cap{ position:absolute; left:0; right:0; bottom:0; padding:10px 12px; background:linear-gradient(0deg,rgba(15,26,50,0.85),transparent); color:#fff; font-size:12px; font-family:'IBM Plex Mono',monospace; pointer-events:none; }
   .gallery-admin{ position:absolute; top:8px; right:8px; display:flex; gap:6px; }
-  .gallery-coming-soon{ border:1px dashed var(--line); border-radius:8px; padding:30px; color:var(--ink-soft); font-size:13px; text-align:center; }
   .lightbox{ position:fixed; inset:0; background:rgba(10,14,24,0.92); z-index:250; display:flex; align-items:center; justify-content:center; padding:30px; }
   .lightbox img{ max-width:90vw; max-height:80vh; border-radius:8px; }
   .lightbox .lb-cap{ position:absolute; bottom:36px; color:#fff; font-family:'IBM Plex Mono',monospace; font-size:13px; }
-  @media (max-width:960px){ .gallery-event-grid{ columns:2 180px; } }
-  @media (max-width:600px){ .gallery-event-grid{ columns:1; } }
+  @media (max-width:960px){ .gallery-grid{ columns:2 180px; } }
 
   /* MERCH */
   .merch-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
@@ -647,56 +639,23 @@ const JOIN_STEPS = [
   'Get access to exclusive events, mentorship, and job postings'
 ];
 
-/* GALLERY: organize photos by event. Add new event objects to this array,
-   then add as many photos as you want inside each event's "photos" array.
-   Each photo needs a direct hosted image "url" and may include a "caption". */
+/* GALLERY: add as many photos as you want, no limit — just add more
+   entries here. Each needs a "url" (a hosted image link — Google Drive
+   set to "anyone with the link", Imgur, etc.) and an optional "caption". */
 const GALLERY = [
   {
-    event:'Zarb Finance Professor Panel',
-    date:'',
-    description:'',
-    photos:[
-      {
-        url:'https://m.groupme.com/uploads/80c6418c127942fea88269d1bc8cc1dd/4032x3024.original.jpeg',
-        caption:'Zarb Finance Professor Panel'
-      }
-      // Add more photos for this event like this:
-      // ,{url:'https://your-image-host.com/photo2.jpg', caption:'Zarb Finance Professor Panel'}
-    ]
+    url: 'https://m.groupme.com/uploads/80c6418c127942fea88269d1bc8cc1dd/4032x3024.original.jpeg',
+    caption: 'Zarb Finance Professor Panel'
   },
-  event: 'NAME OF EVENT',
-  date: 'MONTH YEAR',
-
-  description: 'Short description of the event.',
-
-  photos: [
-
-    {
-      url: 'IMAGE-URL-1',
-      caption: 'Caption'
-    },
-
-    {
-      url: 'IMAGE-URL-2',
-      caption: 'Caption'
-    },
-
-    {
-      url: 'IMAGE-URL-3',
-      caption: 'Caption'
-    }
-
-  ]
-},
-  // Add another event like this:
-  // ,{
-  //   event:'Event Name',
-  //   date:'Month Year',
-  //   description:'Short description of the event.',
-  //   photos:[
-  //     {url:'https://your-image-host.com/photo1.jpg', caption:'Photo caption'}
-  //   ]
-  // }
+  {
+    url: 'PASTE-DIRECT-IMAGE-URL-HERE',
+    caption: 'Zarb Finance Professor Panel'
+  },
+  {
+    url: 'PASTE-DIRECT-IMAGE-URL-HERE',
+    caption: 'Fall 2026 Welcome Meeting'
+  }
+  // {url:'https://your-image-host.com/photo1.jpg', caption:'Fall Kickoff 2026'},
 ];
 
 /* MERCH: same idea — add or remove items freely. "orderLink" can point to
@@ -871,35 +830,16 @@ document.getElementById('officerGrid').innerHTML = OFFICERS.map(o=>`
     wrap.innerHTML = `<div class="empty-state">No photos yet — check back after our next event.</div>`;
     return;
   }
-  wrap.innerHTML = GALLERY.map((event,eventIndex)=>{
-    const photos = event.photos || [];
-    return `
-      <div class="gallery-event">
-        <div class="gallery-event-header">
-          ${event.date ? `<span class="eyebrow">${escapeHtml(event.date)}</span>` : ''}
-          <h3>${escapeHtml(event.event)}</h3>
-          ${event.description ? `<p>${escapeHtml(event.description)}</p>` : ''}
-        </div>
-        ${photos.length ? `
-          <div class="gallery-event-grid">
-            ${photos.map((photo,photoIndex)=>`
-              <div class="gallery-item">
-                <img src="${escapeAttr(photo.url)}" alt="${escapeAttr(photo.caption||event.event||'FMA event photo')}" loading="lazy" data-gallery-event="${eventIndex}" data-gallery-photo="${photoIndex}">
-                ${photo.caption ? `<div class="gallery-cap">${escapeHtml(photo.caption)}</div>` : ''}
-              </div>`).join('')}
-          </div>` : `<div class="gallery-coming-soon">Photos coming soon.</div>`}
-      </div>`;
-  }).join('');
-  wrap.querySelectorAll('.gallery-item img').forEach(img=> img.addEventListener('click', ()=>{
-    const eventIndex = Number(img.dataset.galleryEvent);
-    const photoIndex = Number(img.dataset.galleryPhoto);
-    const photo = GALLERY[eventIndex].photos[photoIndex];
-    openLightbox(photo.url, photo.caption || GALLERY[eventIndex].event);
-  }));
+  wrap.innerHTML = GALLERY.map((p,idx)=>`
+    <div class="gallery-item">
+      <img src="${escapeAttr(p.url)}" alt="${escapeAttr(p.caption||'FMA event photo')}" loading="lazy" data-view="${idx}">
+      ${p.caption ? `<div class="gallery-cap">${escapeHtml(p.caption)}</div>` : ''}
+    </div>`).join('');
+  wrap.querySelectorAll('[data-view]').forEach(img=> img.addEventListener('click', ()=> openLightbox(img.src, img.alt)));
 })();
 function openLightbox(src, cap){
   const root = document.getElementById('modalRoot');
-  root.innerHTML = `<div class="lightbox" id="lb"><img src="${escapeAttr(src)}" alt="${escapeAttr(cap||'FMA event photo')}"><div class="lb-cap">${escapeHtml(cap||'')}</div></div>`;
+  root.innerHTML = `<div class="lightbox" id="lb"><img src="${src}" alt=""><div class="lb-cap">${escapeHtml(cap||'')}</div></div>`;
   document.getElementById('lb').onclick = ()=> root.innerHTML='';
 }
 
